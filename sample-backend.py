@@ -39,7 +39,7 @@ def get_users():
       users['users_list'].append(userToAdd)
       resp = jsonify(success=True)
       #resp.status_code = 200 #optionally, you can always set a response code. 
-      # 200 is the default code for a normal response 
+      # 200 is the default code for a normal response
       return resp
 
 users = { 
