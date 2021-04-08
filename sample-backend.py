@@ -14,16 +14,16 @@ app = Flask(__name__)
 #       return subdict
 #    return users
 
-# @app.route('/users/<id>')
-# def get_user(id):
-#    if id :
-#       for user in users['users_list']:
-#         if user['id'] == id:
-#            return user
-#       return ({})
-#    return users
+@app.route('/users/<job>')
+def get_user(job):
+   if job :
+      for user in users['users_list']:
+        if user['job'] == job:
+           return user
+      return ({})
+   return users
 
-@app.route('/users', methods=['GET', 'POST'])
+@app.route('/users', methods=['GET', 'POST', 'DELETE'])
 def get_users():
    if request.method == 'GET':
       search_username = request.args.get('name')
@@ -41,6 +41,13 @@ def get_users():
       #resp.status_code = 200 #optionally, you can always set a response code. 
       # 200 is the default code for a normal response
       return resp
+   elif request.method == 'DELETE':
+      userToDelete = request.get_json()
+      users['users_list'].remove(userToDelete)
+      resp2 = jsonify(success=True)
+      #resp.status_code = 200 #optionally, you can always set a response code. 
+      # 200 is the default code for a normal response
+      return resp2
 
 users = { 
     'users_list' :
