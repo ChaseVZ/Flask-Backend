@@ -3,34 +3,43 @@ from flask import request
 from flask import jsonify
 app = Flask(__name__)
 
-# @app.route('/users')
-# def get_users():
-#    search_username = request.args.get('name') #accessing the value of parameter 'name'
-#    if search_username :
-#       subdict = {'users_list' : []}
-#       for user in users['users_list']:
-#          if user['name'] == search_username:
-#             subdict['users_list'].append(user)
-#       return subdict
-#    return users
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
-@app.route('/users/<job>')
-def get_user(job):
-   if job :
+@app.route('/users/<id>')
+def get_user(id):
+   if id :
       for user in users['users_list']:
-        if user['job'] == job:
+        if user['id'] == id:
            return user
       return ({})
    return users
+
+def find_users_by_name(name):
+   subdict = {'users_list' : []}
+   for user in users['users_list']:
+      if user['name'] == name:
+         subdict['users_list'].append(user)
+   return subdict  
 
 @app.route('/users', methods=['GET', 'POST', 'DELETE'])
 def get_users():
    if request.method == 'GET':
       search_username = request.args.get('name')
-      if search_username :
+      search_job = request.args.get('job')
+      if search_username and search_job :
          subdict = {'users_list' : []}
          for user in users['users_list']:
-            if user['name'] == search_username:
+            if user['name'] == search_username and user['job'] == search_job:
+               subdict['users_list'].append(user)
+         return subdict
+      elif search_username  :
+         return find_users_by_name(search_username)  
+      elif search_job  :
+         subdict = {'users_list' : []}
+         for user in users['users_list']:
+            if user['job'] == search_job:
                subdict['users_list'].append(user)
          return subdict
       return users
@@ -48,6 +57,18 @@ def get_users():
       #resp.status_code = 200 #optionally, you can always set a response code. 
       # 200 is the default code for a normal response
       return resp2
+
+
+# @app.route('/users')
+# def get_users():
+#    search_username = request.args.get('name') #accessing the value of parameter 'name'
+#    if search_username :
+#       subdict = {'users_list' : []}
+#       for user in users['users_list']:
+#          if user['name'] == search_username:
+#             subdict['users_list'].append(user)
+#       return subdict
+#    return users
 
 users = { 
     'users_list' :
