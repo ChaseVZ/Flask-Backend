@@ -1,17 +1,30 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+from flask_cors import CORS
+from random import seed
+import random
+import string
+
+
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
 
-@app.route('/users/<id>')
+@app.route('/users/<id>', methods=['DELETE'])
 def get_user(id):
    if id :
       for user in users['users_list']:
         if user['id'] == id:
+           if request.method == 'DELETE' : 
+              users['users_list'].remove(user)
+              resp = jsonify(success=True)
+              if resp.status_code == 200:
+                 resp.status_code = 204
+              return resp 
            return user
       return ({})
    return users
@@ -44,9 +57,17 @@ def get_users():
          return subdict
       return users
    elif request.method == 'POST':
+      # seed(74582)[]
       userToAdd = request.get_json()
+      id = str(random.choice(string.ascii_letters))
+      id = id + str(random.randint(1,999))
+      id = id.lower()
+      userToAdd['id'] = id
       users['users_list'].append(userToAdd)
-      resp = jsonify(success=True)
+      # resp = jsonify(success=True)
+      resp = jsonify(userToAdd)
+      if resp.status_code == 200 :
+         resp.status_code = 201
       #resp.status_code = 200 #optionally, you can always set a response code. 
       # 200 is the default code for a normal response
       return resp
@@ -54,9 +75,12 @@ def get_users():
       userToDelete = request.get_json()
       users['users_list'].remove(userToDelete)
       resp2 = jsonify(success=True)
+      if resp.status_code == 200:
+         resp.status_code = 204
       #resp.status_code = 200 #optionally, you can always set a response code. 
       # 200 is the default code for a normal response
       return resp2
+
 
 
 # @app.route('/users')
